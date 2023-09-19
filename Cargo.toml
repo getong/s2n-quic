@@ -2,6 +2,7 @@
 members = [
     "common/s2n-*",
     "quic/s2n-*",
+    "examples/resumption/",
 ]
 resolver = "2"
 # don't include any workspaces outside of the main project

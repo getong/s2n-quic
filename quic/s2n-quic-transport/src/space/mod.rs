@@ -271,8 +271,10 @@ impl<Config: endpoint::Config> PacketSpaceManager<Config> {
 
             match session_info.session.poll(&mut context)? {
                 Poll::Ready(_success) => {
-                    // The TLS session and retry_cid is no longer needed
-                    self.session_info = None;
+                    if Config::ENDPOINT_TYPE.is_server() {
+                        self.session_info = None;
+                    }
+
                     self.retry_cid = None;
                 }
                 Poll::Pending => return Poll::Pending,
@@ -280,6 +282,51 @@ impl<Config: endpoint::Config> PacketSpaceManager<Config> {
         }
 
         Poll::Ready(Ok(()))
+    }
+
+    #[allow(clippy::too_many_arguments)]
+    pub fn post_handshake_crypto<Pub: event::ConnectionPublisher>(
+        &mut self,
+        path_manager: &mut path::Manager<Config>,
+        local_id_registry: &mut connection::LocalIdRegistry,
+        limits: &mut Limits,
+        now: Timestamp,
+        waker: &Waker,
+        publisher: &mut Pub,
+        datagram: &mut Config::DatagramEndpoint,
+    ) -> Result<(), transport::Error> {
+        if let Some(session_info) = self.session_info.as_mut() {
+            let mut context: SessionContext<Config, Pub> = SessionContext {
+                now,
+                initial_cid: &session_info.initial_cid,
+                retry_cid: self.retry_cid.as_deref(),
+                initial: &mut self.initial,
+                handshake: &mut self.handshake,
+                application: &mut self.application,
+                zero_rtt_crypto: &mut self.zero_rtt_crypto,
+                path_manager,
+                handshake_status: &mut self.handshake_status,
+                local_id_registry,
+                limits,
+                server_name: &mut self.server_name,
+                application_protocol: &mut self.application_protocol,
+                waker,
+                publisher,
+                datagram,
+            };
+
+            let result = session_info
+                .session
+                .process_post_handshake_message(&mut context);
+            // Once the client has received a session ticket successfully, we can throw away
+            // the session_info object as we don't expect more post-handshake messages. Additionally
+            // we throw away the result of the post-handshake processing if it is an error.
+            if result.is_ok() {
+                self.session_info = None;
+            }
+        }
+
+        Ok(())
     }
 
     /// Called when the connection timer expired

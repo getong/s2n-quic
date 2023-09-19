@@ -162,6 +162,7 @@ pub trait ConnectionTrait: 'static + Send + Sized {
         random_generator: &mut <Self::Config as endpoint::Config>::RandomGenerator,
         subscriber: &mut <Self::Config as endpoint::Config>::EventSubscriber,
         packet_interceptor: &mut <Self::Config as endpoint::Config>::PacketInterceptor,
+        datagram_endpoint: &mut <Self::Config as endpoint::Config>::DatagramEndpoint,
     ) -> Result<(), ProcessingError>;
 
     /// Is called when a version negotiation packet had been received
@@ -282,6 +283,7 @@ pub trait ConnectionTrait: 'static + Send + Sized {
                 random_generator,
                 subscriber,
                 packet_interceptor,
+                datagram_endpoint,
             ),
             ProtectedPacket::VersionNegotiation(packet) => self.handle_version_negotiation_packet(
                 datagram,

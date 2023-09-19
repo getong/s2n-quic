@@ -4,6 +4,7 @@
 use s2n_quic::provider::tls::s2n_tls::Server;
 use std::{error::Error, time::SystemTime};
 
+/// NOTE: this certificate is to be used for demonstration purposes only!
 pub static CERT_PEM: &str = include_str!(concat!(
     env!("CARGO_MANIFEST_DIR"),
     "/../../quic/s2n-quic-core/certs/cert.pem"

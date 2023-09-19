@@ -209,6 +209,7 @@ impl<L: ConfigLoader> tls::Endpoint for Client<L> {
         let config = self.loader.load(crate::ConnectionContext {
             server_name: Some(&server_name),
         });
+
         self.params.with(params, |params| {
             Session::new(endpoint::Type::Client, config, params, Some(server_name)).unwrap()
         })

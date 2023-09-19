@@ -863,7 +863,7 @@ impl<Config: endpoint::Config> PacketSpace<Config> for ApplicationSpace<Config> 
 
     fn handle_crypto_frame<Pub: event::ConnectionPublisher>(
         &mut self,
-        _frame: CryptoRef,
+        frame: CryptoRef,
         _datagram: &DatagramInfo,
         _path: &mut Path<Config>,
         _publisher: &mut Pub,
@@ -874,7 +874,9 @@ impl<Config: endpoint::Config> PacketSpace<Config> for ApplicationSpace<Config> 
         //# CRYPTO frames received in the future, or it MAY close the connection
         //# with a CRYPTO_BUFFER_EXCEEDED error code.
 
-        // we currently just discard CRYPTO frames post-handshake
+        // Might be a session ticket ;)
+        self.crypto_stream.on_crypto_frame(frame)?;
+
         Ok(())
     }
 
