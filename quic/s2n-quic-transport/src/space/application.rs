@@ -868,13 +868,6 @@ impl<Config: endpoint::Config> PacketSpace<Config> for ApplicationSpace<Config> 
         _path: &mut Path<Config>,
         _publisher: &mut Pub,
     ) -> Result<(), transport::Error> {
-        //= https://www.rfc-editor.org/rfc/rfc9000#section-7.5
-        //# Once the handshake completes, if an endpoint is unable to buffer all
-        //# data in a CRYPTO frame, it MAY discard that CRYPTO frame and all
-        //# CRYPTO frames received in the future, or it MAY close the connection
-        //# with a CRYPTO_BUFFER_EXCEEDED error code.
-
-        // Might be a session ticket ;)
         self.crypto_stream.on_crypto_frame(frame)?;
 
         Ok(())

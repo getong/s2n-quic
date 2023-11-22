@@ -79,7 +79,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // ensure the connection doesn't time out with inactivity
     connection.keep_alive(true)?;
 
-    // uses the session ticket from the previous connection
+    // This client will use the session ticket collected from the previous connection
     let tls = Client::builder()
         .with_certificate(CERT_PEM)?
         .with_key_logging()?;
@@ -91,6 +91,5 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let addr: SocketAddr = "127.0.0.1:4433".parse()?;
     let connect = Connect::new(addr).with_server_name("localhost");
     let _connection = client.connect(connect).await?;
-    println!("Resumed connection");
     Ok(())
 }
