@@ -9,7 +9,7 @@ use s2n_tls::{
     error::Error,
 };
 use std::{
-    net::SocketAddr
+    net::SocketAddr,
     pin::Pin,
     sync::{Arc, Mutex},
 };
