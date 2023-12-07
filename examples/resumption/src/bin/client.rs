@@ -1,12 +1,14 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
-
-use s2n_quic::{client::Connect, provider::tls::s2n_tls::Client};
-use s2n_tls::{
-    callbacks::{ConnectionFuture, SessionTicket, SessionTicketCallback},
-    config::ConnectionInitializer,
-    connection,
-    error::Error,
+use s2n_quic::{
+    client::Connect,
+    provider::tls::s2n_tls::{
+        callbacks::{ConnectionFuture, SessionTicket, SessionTicketCallback},
+        config::ConnectionInitializer,
+        connection,
+        error::Error,
+        Client,
+    },
 };
 use std::{
     net::SocketAddr,
