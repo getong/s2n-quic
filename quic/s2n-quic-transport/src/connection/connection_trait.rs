@@ -154,6 +154,7 @@ pub trait ConnectionTrait: 'static + Send + Sized {
     ) -> Result<(), ProcessingError>;
 
     /// Is called when a short packet had been received
+    #[allow(clippy::too_many_arguments)]
     fn handle_short_packet(
         &mut self,
         datagram: &DatagramInfo,
